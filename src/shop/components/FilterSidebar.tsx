@@ -29,7 +29,11 @@ export const FilterSidebar = () => {
 
   const handlePriceChange = (price: Price) => {
     searchParams.set("page", "1");
-    searchParams.set("price", price);
+    if (price === "any") {
+      searchParams.delete("price");
+    } else {
+      searchParams.set("price", price);
+    }
     setSearchParams(searchParams);
   };
 
@@ -62,15 +66,15 @@ export const FilterSidebar = () => {
       {/* Price Range */}
       <div className="space-y-4">
         <h4 className="font-medium">Precio</h4>
-        <RadioGroup defaultValue={PRICES[0].label} className="space-y-3">
+        <RadioGroup
+          defaultValue={currentPrice}
+          onValueChange={handlePriceChange}
+          className="space-y-3"
+        >
           {PRICES.map((price) => (
             <div className="flex items-center space-x-2" key={price.id}>
-              <RadioGroupItem
-                value={price.label}
-                id={price.id}
-                onClick={() => handlePriceChange(price.label)}
-              />
-              <Label htmlFor="priceAny" className="text-sm cursor-pointer">
+              <RadioGroupItem value={price.label} id={price.id} />
+              <Label htmlFor={price.id} className="text-sm cursor-pointer">
                 {price.text.toUpperCase()}
               </Label>
             </div>
