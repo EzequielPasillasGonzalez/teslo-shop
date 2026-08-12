@@ -5,13 +5,17 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { useSearchParams } from "react-router";
 import { SIZES } from "@/shop/const/sizes";
+import { PRICES } from "@/shop/const/prices";
 
-export type Size = (typeof SIZES)[number]["id"];
+type Size = (typeof SIZES)[number]["id"];
+// Extrae "any" | "0-50" | "50-100" | "100-200" | "200+"
+type Price = (typeof PRICES)[number]["label"];
 
 export const FilterSidebar = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const currentSizes = searchParams.get("sizes")?.split(",") || [];
+  const currentPrice = searchParams.get("price") || "any";
 
   const handleSizeChanged = (size: Size) => {
     const newSizes = currentSizes.includes(size)
@@ -20,6 +24,12 @@ export const FilterSidebar = () => {
 
     searchParams.set("page", "1");
     searchParams.set("sizes", newSizes.join(","));
+    setSearchParams(searchParams);
+  };
+
+  const handlePriceChange = (price: Price) => {
+    searchParams.set("page", "1");
+    searchParams.set("price", price);
     setSearchParams(searchParams);
   };
 
@@ -52,37 +62,19 @@ export const FilterSidebar = () => {
       {/* Price Range */}
       <div className="space-y-4">
         <h4 className="font-medium">Precio</h4>
-        <RadioGroup defaultValue="" className="space-y-3">
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="any" id="priceAny" />
-            <Label htmlFor="priceAny" className="text-sm cursor-pointer">
-              Cualquier precio
-            </Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="0-50" id="price1" />
-            <Label htmlFor="price1" className="text-sm cursor-pointer">
-              $0 - $50
-            </Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="50-100" id="price2" />
-            <Label htmlFor="price2" className="text-sm cursor-pointer">
-              $50 - $100
-            </Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="100-200" id="price3" />
-            <Label htmlFor="price3" className="text-sm cursor-pointer">
-              $100 - $200
-            </Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="200+" id="price4" />
-            <Label htmlFor="price4" className="text-sm cursor-pointer">
-              $200+
-            </Label>
-          </div>
+        <RadioGroup defaultValue={PRICES[0].label} className="space-y-3">
+          {PRICES.map((price) => (
+            <div className="flex items-center space-x-2" key={price.id}>
+              <RadioGroupItem
+                value={price.label}
+                id={price.id}
+                onClick={() => handlePriceChange(price.label)}
+              />
+              <Label htmlFor="priceAny" className="text-sm cursor-pointer">
+                {price.text.toUpperCase()}
+              </Label>
+            </div>
+          ))}
         </RadioGroup>
       </div>
     </div>
