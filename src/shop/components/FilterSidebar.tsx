@@ -3,16 +3,25 @@ import { Separator } from "@/components/ui/separator";
 
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { useSearchParams } from "react-router";
+import { SIZES } from "@/shop/const/sizes";
+
+export type Size = (typeof SIZES)[number]["id"];
 
 export const FilterSidebar = () => {
-  const sizes = [
-    { id: "xs", label: "XS" },
-    { id: "s", label: "S" },
-    { id: "m", label: "M" },
-    { id: "l", label: "L" },
-    { id: "xl", label: "XL" },
-    { id: "xxl", label: "XXL" },
-  ];
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const currentSizes = searchParams.get("sizes")?.split(",") || [];
+
+  const handleSizeChanged = (size: Size) => {
+    const newSizes = currentSizes.includes(size)
+      ? currentSizes.filter((s) => s != size)
+      : [...currentSizes, size];
+
+    searchParams.set("page", "1");
+    searchParams.set("sizes", newSizes.join(","));
+    setSearchParams(searchParams);
+  };
 
   return (
     <div className="w-64 space-y-6">
@@ -24,8 +33,14 @@ export const FilterSidebar = () => {
       <div className="space-y-4">
         <h4 className="font-medium">Tallas</h4>
         <div className="grid grid-cols-3 gap-2">
-          {sizes.map((size) => (
-            <Button key={size.id} variant="outline" size="sm" className="h-8">
+          {SIZES.map((size) => (
+            <Button
+              key={size.id}
+              variant={currentSizes.includes(size.id) ? "default" : "outline"}
+              size="sm"
+              className="h-8"
+              onClick={() => handleSizeChanged(size.id)}
+            >
               {size.label}
             </Button>
           ))}
