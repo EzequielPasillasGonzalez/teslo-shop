@@ -1,11 +1,25 @@
 import { Search, ShoppingBag, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useRef, useState, type KeyboardEvent } from "react";
 
+import { useCustomParams } from "@/shop/hooks/useSearchParams";
 
 export const CustomHeader = () => {
   const [cartCount] = useState(3);
+
+  const { getParam, setParam } = useCustomParams();
+
+  const searchQuery = getParam("search");
+
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const handleInputSearch = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key !== "Enter") return;
+
+    setParam("search", inputRef.current?.value);
+  };
+
   return (
     <header className="sticky top-0 z-50 w-full border-b backdrop-blur bg-slate-50">
       <div className="container mx-auto px-4 lg:px-8">
@@ -54,8 +68,11 @@ export const CustomHeader = () => {
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
+                  ref={inputRef}
                   placeholder="Buscar productos..."
-                  className="pl-9 w-64 h-9"
+                  className="pl-9 w-64 h-9 bg-white"
+                  onKeyDown={handleInputSearch}
+                  defaultValue={searchQuery}
                 />
               </div>
             </div>

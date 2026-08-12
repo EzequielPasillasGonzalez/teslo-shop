@@ -2,25 +2,25 @@ import { Button } from "@/components/ui/button";
 import type { Product } from "@/mocks/products";
 import { FilterSidebar } from "@/shop/components/FilterSidebar";
 import { ProductCard } from "@/shop/components/ProductCard";
+import { ViewMode } from "@/shop/enums/viewMode";
+import { useCustomParams } from "@/shop/hooks/useSearchParams";
 
 import { Filter, Grid, List } from "lucide-react";
 import { useState } from "react";
-import { useSearchParams } from "react-router";
 
 interface Props {
   products: Product[];
 }
 
 export const ProductsGrid = ({ products }: Props) => {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const { getParam, setParam } = useCustomParams();
 
   const [showFilters, setShowFilters] = useState(false);
 
-  const viewMode = searchParams.get("viewMode") || "grid";
+  const viewMode = getParam("viewMode");
 
-  const handleViewModeChange = (mode: "grid" | "list") => {
-    searchParams.set("viewMode", mode);
-    setSearchParams(searchParams);
+  const handleViewModeChange = (mode: ViewMode) => {
+    setParam("viewMode", mode);
   };
 
   return (

@@ -3,38 +3,32 @@ import { Separator } from "@/components/ui/separator";
 
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { useSearchParams } from "react-router";
-import { SIZES } from "@/shop/const/sizes";
-import { PRICES } from "@/shop/const/prices";
-
-type Size = (typeof SIZES)[number]["id"];
-// Extrae "any" | "0-50" | "50-100" | "100-200" | "200+"
-type Price = (typeof PRICES)[number]["label"];
+import { SIZES, type Size } from "@/shop/const/sizes";
+import { PRICES, type Price } from "@/shop/const/prices";
+import { useCustomParams } from "@/shop/hooks/useSearchParams";
 
 export const FilterSidebar = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const { getParam, setParam } = useCustomParams();
 
-  const currentSizes = searchParams.get("sizes")?.split(",") || [];
-  const currentPrice = searchParams.get("price") || "any";
+  const currentSizes = getParam("sizes");
+  const currentPrice = getParam("price");
 
   const handleSizeChanged = (size: Size) => {
     const newSizes = currentSizes.includes(size)
       ? currentSizes.filter((s) => s != size)
       : [...currentSizes, size];
 
-    searchParams.set("page", "1");
-    searchParams.set("sizes", newSizes.join(","));
-    setSearchParams(searchParams);
+    setParam("page", 1);
+    setParam("sizes", newSizes);
   };
 
   const handlePriceChange = (price: Price) => {
-    searchParams.set("page", "1");
+    setParam("page", 1);
     if (price === "any") {
-      searchParams.delete("price");
+      setParam("price", null);
     } else {
-      searchParams.set("price", price);
+      setParam("price", price);
     }
-    setSearchParams(searchParams);
   };
 
   return (

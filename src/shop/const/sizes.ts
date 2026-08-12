@@ -6,3 +6,5 @@ export const SIZES = [
   { id: "xl", label: "XL" },
   { id: "xxl", label: "XXL" },
 ] as const;
+
+export type Size = (typeof SIZES)[number]["id"];
