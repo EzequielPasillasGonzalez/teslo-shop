@@ -2,6 +2,7 @@ import { type ComponentType, type LazyExoticComponent, Suspense } from "react";
 import { createBrowserRouter, Navigate } from "react-router";
 import {
   AdminLayout,
+  AdminProductPage,
   AdminProductsPage,
   AuthLayout,
   DashboardPage,
@@ -14,7 +15,7 @@ import {
 } from "./lazy-components";
 
 // Helper tipado para renderizar lazy componentes
-const load = (Component: LazyExoticComponent<ComponentType<unknown>>) => (
+const load = (Component: LazyExoticComponent<ComponentType<any>>) => (
   <Suspense
     fallback={
       <div className="flex h-screen items-center justify-center">
@@ -75,8 +76,12 @@ export const appRouter = createBrowserRouter([
         element: load(DashboardPage),
       },
       {
-        path: "products/:id",
+        path: "products",
         element: load(AdminProductsPage),
+      },
+      {
+        path: "products/:id",
+        element: load(AdminProductPage),
       },
     ],
   },
