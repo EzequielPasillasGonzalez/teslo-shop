@@ -8,26 +8,26 @@ import { PRICES, type Price } from "@/shop/const/prices";
 import { useCustomParams } from "@/shop/hooks/useSearchParams";
 
 export const FilterSidebar = () => {
-  const { getParam, setParam } = useCustomParams();
+  const { getQueryParam, setQueryParam } = useCustomParams();
 
-  const currentSizes = getParam("sizes");
-  const currentPrice = getParam("price");
+  const currentSizes = getQueryParam("sizes");
+  const currentPrice = getQueryParam("price");
 
   const handleSizeChanged = (size: Size) => {
     const newSizes = currentSizes.includes(size)
       ? currentSizes.filter((s) => s != size)
       : [...currentSizes, size];
 
-    setParam("page", 1);
-    setParam("sizes", newSizes);
+    setQueryParam("page", 1);
+    setQueryParam("sizes", newSizes);
   };
 
   const handlePriceChange = (price: Price) => {
-    setParam("page", 1);
+    setQueryParam("page", 1);
     if (price === "any") {
-      setParam("price", null);
+      setQueryParam("price", null);
     } else {
-      setParam("price", price);
+      setQueryParam("price", price);
     }
   };
 

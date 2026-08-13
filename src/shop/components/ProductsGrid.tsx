@@ -13,14 +13,14 @@ interface Props {
 }
 
 export const ProductsGrid = ({ products }: Props) => {
-  const { getParam, setParam } = useCustomParams();
+  const { getQueryParam, setQueryParam } = useCustomParams();
 
   const [showFilters, setShowFilters] = useState(false);
 
-  const viewMode = getParam("viewMode");
+  const viewMode = getQueryParam("viewMode");
 
   const handleViewModeChange = (mode: ViewMode) => {
-    setParam("viewMode", mode);
+    setQueryParam("viewMode", mode);
   };
 
   return (
