@@ -6,6 +6,7 @@ import { useRef, type KeyboardEvent } from "react";
 import { useCustomParams } from "@/shop/hooks/useSearchParams";
 import { cn } from "@/lib/utils.ts";
 import { Link } from "react-router";
+import { CustomLogo } from "@/components/custom/CustomLogo.tsx";
 
 export const CustomHeader = () => {
   const {
@@ -29,14 +30,7 @@ export const CustomHeader = () => {
       <div className="container mx-auto px-4 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
-          <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="icon" className="md:hidden">
-              <Menu className="h-5 w-5" />
-            </Button>
-            <h1 className="text-xl font-semibold tracking-tight">
-              TESLA STYLE
-            </h1>
-          </div>
+          <CustomLogo />
 
           {/* Navigation - Desktop */}
           <nav className="hidden md:flex items-center space-x-8">
