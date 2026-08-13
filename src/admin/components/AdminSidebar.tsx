@@ -32,7 +32,11 @@ const AdminSidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) => {
     { icon: HelpCircle, label: "Ayuda" },
   ];
 
-  const isActiveRoute = (to: string) => pathname === to;
+  const isActiveRoute = (to: string) => {
+    if (pathname.includes("/admin/products/") && to === "/admin/products")
+      return true;
+    return pathname === to;
+  };
 
   return (
     <div
