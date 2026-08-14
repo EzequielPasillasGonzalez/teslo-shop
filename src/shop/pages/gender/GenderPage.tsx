@@ -3,10 +3,10 @@ import { CustomPagination } from "@/components/custom/CustomPagination.tsx";
 import { CustomJumbotron } from "@/shop/components/CustomJumbotron.tsx";
 import { ProductsGrid } from "@/shop/components/ProductsGrid.tsx";
 import { useProducts } from "@/shop/hooks/useProducts.tsx";
-import { useCustomParams } from "@/shop/hooks/useSearchParams.tsx";
+import { useShopQueryParams } from "@/shop/hooks/useParams";
 
 const GenderPage = () => {
-  const { gender: genderPath } = useCustomParams();
+  const { gender: genderPath } = useShopQueryParams();
   const { data } = useProducts();
 
   const genderLabel =

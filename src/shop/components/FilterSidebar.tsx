@@ -5,10 +5,10 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { SIZES, type Size } from "@/shop/const/sizes";
 import { PRICES, type Price } from "@/shop/const/prices";
-import { useCustomParams } from "@/shop/hooks/useSearchParams";
+import { useShopQueryParams } from "@/shop/hooks/useParams";
 
 export const FilterSidebar = () => {
-  const { getQueryParam, setQueryParam } = useCustomParams();
+  const { getQueryParam, setQueryParam } = useShopQueryParams();
 
   const currentSizes = getQueryParam("sizes");
   const currentPrice = getQueryParam("price");

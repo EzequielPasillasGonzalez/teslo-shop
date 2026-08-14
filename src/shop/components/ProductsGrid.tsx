@@ -4,7 +4,7 @@ import type { Product } from "@/interfaces/product.interface.ts";
 import { FilterSidebar } from "@/shop/components/FilterSidebar";
 import { ProductCard } from "@/shop/components/ProductCard";
 import { ViewMode } from "@/shop/enums/viewMode";
-import { useCustomParams } from "@/shop/hooks/useSearchParams";
+import { useShopQueryParams } from "@/shop/hooks/useParams";
 
 import { Filter, Grid, List } from "lucide-react";
 import { useState } from "react";
@@ -14,7 +14,7 @@ interface Props {
 }
 
 export const ProductsGrid = ({ products }: Props) => {
-  const { getQueryParam, setQueryParam } = useCustomParams();
+  const { getQueryParam, setQueryParam } = useShopQueryParams();
 
   const [showFilters, setShowFilters] = useState(false);
 

@@ -1,9 +1,9 @@
-import { Search, Menu } from "lucide-react";
+import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useRef, type KeyboardEvent } from "react";
 
-import { useCustomParams } from "@/shop/hooks/useSearchParams";
+import { useShopQueryParams } from "@/shop/hooks/useParams";
 import { cn } from "@/lib/utils.ts";
 import { Link } from "react-router";
 import { CustomLogo } from "@/components/custom/CustomLogo.tsx";
@@ -13,7 +13,7 @@ export const CustomHeader = () => {
     getQueryParam,
     setQueryParam,
     gender: genderPath,
-  } = useCustomParams();
+  } = useShopQueryParams();
 
   const searchQuery = getQueryParam("search");
 

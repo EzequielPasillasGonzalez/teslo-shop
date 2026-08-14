@@ -25,7 +25,7 @@ type QueryParamsObj = Partial<QueryParamsMap>;
 // Valores por defecto centralizados
 const DEFAULT_PARAMS: QueryParamsMap = {
   page: 1,
-  limit: 10,
+  limit: 9,
   price: "any" as Price,
   sizes: [],
   viewMode: "grid" as ViewMode,
@@ -36,8 +36,8 @@ const DEFAULT_PARAMS: QueryParamsMap = {
 
 // Estrategias de Parseo (De URL String a Tipo TS)
 const PARSERS: { [K in QueryParamKey]?: (val: string) => QueryParamsMap[K] } = {
-  page: (val) => parseInt(val, 10) || DEFAULT_PARAMS.page,
-  limit: (val) => parseInt(val, 10) || DEFAULT_PARAMS.limit,
+  page: (val) => parseInt(val, 9) || DEFAULT_PARAMS.page,
+  limit: (val) => parseInt(val, 9) || DEFAULT_PARAMS.limit,
   sizes: (val) => {
     const validIds = SIZES.map((s) => s.id as string);
     return val.split(",").filter((s) => validIds.includes(s)) as Size[];
@@ -45,7 +45,7 @@ const PARSERS: { [K in QueryParamKey]?: (val: string) => QueryParamsMap[K] } = {
   inStock: (val) => val === "true",
 };
 
-export const useCustomParams = () => {
+export const useShopQueryParams = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const pathParams = useParams<PathParams>();
 

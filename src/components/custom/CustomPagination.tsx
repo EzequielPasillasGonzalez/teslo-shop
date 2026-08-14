@@ -6,8 +6,8 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useShopQueryParams } from "@/shop/hooks/useParams.tsx";
 import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react";
-import { useSearchParams } from "react-router";
 
 interface Props {
   totalPages: number;
@@ -16,10 +16,10 @@ interface Props {
 }
 
 export const CustomPagination = ({ totalPages }: Props) => {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const { getQueryParam, setQueryParam } = useShopQueryParams();
 
-  const queryPage = searchParams.get("page") ?? "1";
-  const queryLimit = searchParams.get("limit") ?? "1";
+  const queryPage = getQueryParam("page", 1);
+  const queryLimit = getQueryParam("limit", 9);
 
   const page: number = isNaN(+queryPage) ? 1 : +queryPage;
   const limit: number = isNaN(+queryLimit) ? 6 : +queryLimit;
@@ -27,17 +27,13 @@ export const CustomPagination = ({ totalPages }: Props) => {
   const handlePageChange = (page: number) => {
     if (page < 1 || page > totalPages) return;
 
-    searchParams.set("page", page.toString());
-
-    setSearchParams(searchParams);
+    setQueryParam("page", page);
   };
 
   const handleLimitChange = (limit: number) => {
     if (limit < 1 || limit > 100) return;
 
-    searchParams.set("limit", limit.toString());
-
-    setSearchParams(searchParams);
+    setQueryParam("limit", limit);
   };
 
   // Función para calcular las páginas a mostrar alrededor de la página actual
@@ -77,7 +73,7 @@ export const CustomPagination = ({ totalPages }: Props) => {
       </Button>
 
       {/*  Mostramos siempre la primera pagina */}
-      {page > 3 && (
+      {page >= 3 && (
         <Button variant="outline" size="sm" onClick={() => handlePageChange(1)}>
           1
         </Button>
@@ -103,7 +99,7 @@ export const CustomPagination = ({ totalPages }: Props) => {
       ))}
 
       {/* Mostramos los puntos suspensivos solo si no hemos llegado a la última página */}
-      {page + 1 < totalPages && totalPages > 3 && (
+      {page + 1 < totalPages && page + 2 < totalPages && totalPages > 3 && (
         <Button variant="ghost" size="sm" disabled>
           <MoreHorizontal className="h-4 w-4" />
         </Button>
