@@ -62,10 +62,10 @@ export const CustomHeader = () => {
               Mujeres
             </a>
             <a
-              href="/gender/kids"
+              href="/gender/kid"
               className={cn(
                 `text-sm font-medium transition-colors hover:text-primary`,
-                genderPath === "kids" ? "underline underline-offset-4" : "",
+                genderPath === "kid" ? "underline underline-offset-4" : "",
               )}
             >
               Niños
