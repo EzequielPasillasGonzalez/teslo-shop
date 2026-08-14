@@ -9,6 +9,7 @@ export const useProducts = () => {
   const page = getQueryParam("page", 1);
   const sizes = getQueryParam("sizes", []);
   const price = getQueryParam("price", "any");
+  const search = getQueryParam("search", "");
 
   let minPrice = undefined;
   let maxPrice = undefined;
@@ -42,7 +43,7 @@ export const useProducts = () => {
   return useQuery({
     queryKey: [
       "products",
-      { offset, limit, gender, sizes, minPrice, maxPrice },
+      { offset, limit, gender, sizes, minPrice, maxPrice, search },
     ],
     queryFn: () =>
       getProductsAction({
@@ -52,6 +53,7 @@ export const useProducts = () => {
         gender,
         minPrice,
         maxPrice,
+        q: search,
       }),
     staleTime: 100 * 60 * 5,
   });
