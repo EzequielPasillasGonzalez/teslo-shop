@@ -66,7 +66,7 @@ const DashboardPage = () => {
     <div className="flex-1 p-6">
       {/* Welcome Section */}
       <AdminTitle
-        subttitle="Aqui puedes ver el estado de tu negocio"
+        subtitle="Aqui puedes ver el estado de tu negocio"
         title="Dashboard"
       />
       {/* Stats Grid */}

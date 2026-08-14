@@ -18,7 +18,7 @@ const AdminProductsPage = () => {
       <div className="flex justify-between items-center">
         <AdminTitle
           title="Productos"
-          subttitle="Aqui puedes ver y administrar tus productos"
+          subtitle="Aqui puedes ver y administrar tus productos"
         />
         <Link to={"/admin/products/new"}>
           {" "}
