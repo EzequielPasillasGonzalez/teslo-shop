@@ -4,13 +4,44 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CustomLogo } from "@/components/custom/CustomLogo.tsx";
+import { useState, type SubmitEvent } from "react";
+import { loginAction } from "@/auth/actions/login.action.ts";
+import { useNavigate } from "react-router";
+import { toast } from "sonner";
 
 const LoginPage = ({ className, ...props }: React.ComponentProps<"div">) => {
+  const navigate = useNavigate();
+
+  const [isPosting, setIsPosting] = useState(false);
+
+  const handleLogin = async (event: SubmitEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    setIsPosting(true);
+
+    const formData = new FormData(event.target as HTMLFormElement);
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+
+    try {
+      const data = await loginAction(email, password);
+
+      localStorage.setItem("token", data.token);
+      console.log("redireccionando  al home ");
+      navigate("/");
+    } catch (error) {
+      console.log(error);
+      toast.error("Correo o/y contraseña no validos");
+    }
+
+    setIsPosting(false);
+  };
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="overflow-hidden p-0">
         <CardContent className="grid p-0 md:grid-cols-2">
-          <form className="p-6 md:p-8">
+          <form className="p-6 md:p-8" onSubmit={handleLogin}>
             <div className="flex flex-col gap-6">
               <div className="flex flex-col items-center text-center">
                 <CustomLogo />
@@ -23,6 +54,7 @@ const LoginPage = ({ className, ...props }: React.ComponentProps<"div">) => {
                 <Input
                   id="email"
                   type="email"
+                  name="email"
                   placeholder="mail@google.com"
                   required
                 />
@@ -40,11 +72,12 @@ const LoginPage = ({ className, ...props }: React.ComponentProps<"div">) => {
                 <Input
                   id="password"
                   type="password"
+                  name="password"
                   required
                   placeholder="Contraseña"
                 />
               </div>
-              <Button type="submit" className="w-full">
+              <Button type="submit" className="w-full" disabled={isPosting}>
                 Login
               </Button>
               <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
