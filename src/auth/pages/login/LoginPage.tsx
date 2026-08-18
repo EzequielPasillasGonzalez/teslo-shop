@@ -5,12 +5,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CustomLogo } from "@/components/custom/CustomLogo.tsx";
 import { useState, type SubmitEvent } from "react";
-import { loginAction } from "@/auth/actions/login.action.ts";
+
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
+import { useAuthStore } from "@/auth/store/auth.store.ts";
 
 const LoginPage = ({ className, ...props }: React.ComponentProps<"div">) => {
   const navigate = useNavigate();
+  const { login } = useAuthStore();
 
   const [isPosting, setIsPosting] = useState(false);
 
@@ -23,16 +25,14 @@ const LoginPage = ({ className, ...props }: React.ComponentProps<"div">) => {
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
 
-    try {
-      const data = await loginAction(email, password);
+    const ok = await login(email, password);
 
-      localStorage.setItem("token", data.token);
-      console.log("redireccionando  al home ");
+    if (ok) {
       navigate("/");
-    } catch (error) {
-      console.log(error);
-      toast.error("Correo o/y contraseña no validos");
+      return;
     }
+
+    toast.error("Correo o/y contraseña no validos");
 
     setIsPosting(false);
   };
