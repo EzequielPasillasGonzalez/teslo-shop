@@ -1,3 +1,4 @@
+import { checkAuthAction } from "@/auth/actions/check-auth.action.ts";
 import { loginAction } from "@/auth/actions/login.action.ts";
 import type { User } from "@/interfaces/user.interface.ts";
 import { create } from "zustand";
@@ -27,6 +28,7 @@ type AuthState = {
   //  Actions
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
+  checkAuthStatus: () => Promise<boolean>;
 };
 
 export const useAuthStore = create<AuthState>()((set, get) => ({
@@ -41,6 +43,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
       const data = await loginAction(email, password);
 
       set({ user: data.user, token: data.token, authStatus: "authenticated" });
+      localStorage.setItem("token", data.token);
 
       return true;
     } catch {
@@ -54,5 +57,22 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
   logout: () => {
     localStorage.removeItem("token");
     set({ user: null, token: null, authStatus: "not-authenticated" });
+  },
+
+  checkAuthStatus: async () => {
+    try {
+      const { user, token } = await checkAuthAction();
+
+      set({ user: user, token: token, authStatus: "authenticated" });
+
+      return true;
+    } catch {
+      set({
+        user: undefined,
+        token: undefined,
+        authStatus: "not-authenticated",
+      });
+      return false;
+    }
   },
 }));
