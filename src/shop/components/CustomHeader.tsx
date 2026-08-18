@@ -7,6 +7,7 @@ import { useShopQueryParams } from "@/shop/hooks/useParams";
 import { cn } from "@/lib/utils.ts";
 import { Link } from "react-router";
 import { CustomLogo } from "@/components/custom/CustomLogo.tsx";
+import { useAuthStore } from "@/auth/store/auth.store.ts";
 
 export const CustomHeader = () => {
   const {
@@ -14,6 +15,8 @@ export const CustomHeader = () => {
     setQueryParam,
     gender: genderPath,
   } = useShopQueryParams();
+
+  const { user, logout } = useAuthStore();
 
   const searchQuery = getQueryParam("search");
 
@@ -91,11 +94,22 @@ export const CustomHeader = () => {
               <Search className="h-5 w-5" />
             </Button>
 
-            <Link to={"/auth/login"}>
-              <Button variant={"default"} size={"sm"} className={"ml-2"}>
-                Login
+            {!user ? (
+              <Link to={"/auth/login"}>
+                <Button variant={"default"} size={"sm"} className={"ml-2"}>
+                  Login
+                </Button>
+              </Link>
+            ) : (
+              <Button
+                onClick={logout}
+                variant={"outline"}
+                size={"sm"}
+                className={"ml-2"}
+              >
+                Cerrar Sesion
               </Button>
-            </Link>
+            )}
 
             <Link to={"/admin"}>
               <Button variant={"destructive"} size={"sm"} className={"ml-2"}>

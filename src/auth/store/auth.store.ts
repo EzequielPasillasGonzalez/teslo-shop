@@ -15,35 +15,44 @@ import { create } from "zustand";
 //   dec: () => set((state) => ({ count: state.count - 1 })),
 // }));
 
+type AuthStatus = "authenticated" | "not-authenticated" | "checking";
+
 type AuthState = {
   // Properties
   user: User | null;
   token: string | null;
+  authStatus: AuthStatus;
   //  Getters
 
   //  Actions
   login: (email: string, password: string) => Promise<boolean>;
+  logout: () => void;
 };
 
-export const useAuthStore = create<AuthState>()((set) => ({
+export const useAuthStore = create<AuthState>()((set, get) => ({
   //  Implementacion del store
   user: null,
   token: null,
-
+  authStatus: "checking",
   // Actions
   login: async (email: string, password: string) => {
     console.log({ email, password });
     try {
       const data = await loginAction(email, password);
 
-      set({ user: data.user, token: data.token });
+      set({ user: data.user, token: data.token, authStatus: "authenticated" });
 
       return true;
     } catch {
       localStorage.removeItem("token");
-      set({ user: null, token: null });
+      set({ user: null, token: null, authStatus: "not-authenticated" });
 
       return false;
     }
+  },
+
+  logout: () => {
+    localStorage.removeItem("token");
+    set({ user: null, token: null, authStatus: "not-authenticated" });
   },
 }));
