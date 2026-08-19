@@ -1,4 +1,3 @@
-import { type ComponentType, type LazyExoticComponent, Suspense } from "react";
 import { createBrowserRouter, Navigate } from "react-router";
 import {
   AdminLayout,
@@ -13,44 +12,39 @@ import {
   RegisterPage,
   ShopLayout,
 } from "./lazy-components";
-
-// Helper tipado para renderizar lazy componentes
-const load = (Component: LazyExoticComponent<ComponentType<any>>) => (
-  <Suspense
-    fallback={
-      <div className="flex h-screen items-center justify-center">
-        <span>Cargando...</span>
-      </div>
-    }
-  >
-    <Component />
-  </Suspense>
-);
+import {
+  AdminRoute,
+  NotAuthenticatedRoute,
+} from "@/components/routes/ProtectedRoutes.tsx";
 
 export const appRouter = createBrowserRouter([
   // Main routes
   {
     path: "/",
-    element: load(ShopLayout),
+    element: <ShopLayout />,
     children: [
       {
         index: true,
-        element: load(HomePage),
+        element: <HomePage />,
       },
       {
         path: "product/:idSlug",
-        element: load(ProductPage),
+        element: <ProductPage />,
       },
       {
         path: "gender/:gender",
-        element: load(GenderPage),
+        element: <GenderPage />,
       },
     ],
   },
   // Auth routes
   {
     path: "/auth",
-    element: load(AuthLayout),
+    element: (
+      <NotAuthenticatedRoute>
+        <AuthLayout />
+      </NotAuthenticatedRoute>
+    ),
     children: [
       {
         index: true,
@@ -58,30 +52,34 @@ export const appRouter = createBrowserRouter([
       },
       {
         path: "login",
-        element: load(LoginPage),
+        element: <LoginPage />,
       },
       {
         path: "register",
-        element: load(RegisterPage),
+        element: <RegisterPage />,
       },
     ],
   },
   // Admin routes
   {
     path: "/admin",
-    element: load(AdminLayout),
+    element: (
+      <AdminRoute>
+        <AdminLayout />
+      </AdminRoute>
+    ),
     children: [
       {
         index: true,
-        element: load(DashboardPage),
+        element: <DashboardPage />,
       },
       {
         path: "products",
-        element: load(AdminProductsPage),
+        element: <AdminProductsPage />,
       },
       {
         path: "products/:id",
-        element: load(AdminProductPage),
+        element: <AdminProductPage />,
       },
     ],
   },

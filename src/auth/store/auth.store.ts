@@ -23,7 +23,9 @@ type AuthState = {
   user: User | null;
   token: string | null;
   authStatus: AuthStatus;
+
   //  Getters
+  isAdmin: () => boolean;
 
   //  Actions
   login: (email: string, password: string) => Promise<boolean>;
@@ -36,6 +38,15 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
   user: null,
   token: null,
   authStatus: "checking",
+
+  // Getters
+  isAdmin: () => {
+    //  Con el get podemos acceder a las propertoes del store
+    const roles = get().user?.roles ?? [];
+
+    return roles.includes("admin");
+  },
+
   // Actions
   login: async (email: string, password: string) => {
     console.log({ email, password });
@@ -47,9 +58,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
 
       return true;
     } catch {
-      localStorage.removeItem("token");
-      set({ user: null, token: null, authStatus: "not-authenticated" });
-
+      get().logout();
       return false;
     }
   },
