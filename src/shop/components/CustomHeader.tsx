@@ -16,7 +16,13 @@ export const CustomHeader = () => {
     gender: genderPath,
   } = useShopQueryParams();
 
-  const { user, logout, isAdmin, authStatus } = useAuthStore();
+  // Selectores reactivos de Zustand
+  const authStatus = useAuthStore((state) => state.authStatus);
+  const logout = useAuthStore((state) => state.logout);
+  // Zustand detecta reactivamente si el usuario actual es admin
+  const isAdmin = useAuthStore(
+    (state) => state.user?.roles?.includes("admin") ?? false,
+  );
 
   const searchQuery = getQueryParam("search");
 
@@ -111,7 +117,7 @@ export const CustomHeader = () => {
               </Button>
             )}
 
-            {isAdmin() && (
+            {isAdmin && (
               <Link to={"/admin"}>
                 <Button variant={"destructive"} size={"sm"} className={"ml-2"}>
                   Admin
@@ -119,7 +125,7 @@ export const CustomHeader = () => {
               </Link>
             )}
           </div>
-      </div>
+        </div>
       </div>
     </header>
   );

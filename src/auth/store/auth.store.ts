@@ -1,5 +1,6 @@
 import { checkAuthAction } from "@/auth/actions/check-auth.action.ts";
 import { loginAction } from "@/auth/actions/login.action.ts";
+import { registerAction } from "@/auth/actions/register.action.ts";
 import type { User } from "@/interfaces/user.interface.ts";
 import { create } from "zustand";
 
@@ -29,6 +30,11 @@ type AuthState = {
 
   //  Actions
   login: (email: string, password: string) => Promise<boolean>;
+  register: (
+    email: string,
+    password: string,
+    fullName: string,
+  ) => Promise<boolean>;
   logout: () => void;
   checkAuthStatus: () => Promise<boolean>;
 };
@@ -49,9 +55,22 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
 
   // Actions
   login: async (email: string, password: string) => {
-    console.log({ email, password });
     try {
       const data = await loginAction(email, password);
+
+      set({ user: data.user, token: data.token, authStatus: "authenticated" });
+      localStorage.setItem("token", data.token);
+
+      return true;
+    } catch {
+      get().logout();
+      return false;
+    }
+  },
+
+  register: async (email, password, fullName) => {
+    try {
+      const data = await registerAction(email, password, fullName);
 
       set({ user: data.user, token: data.token, authStatus: "authenticated" });
       localStorage.setItem("token", data.token);
@@ -76,11 +95,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
 
       return true;
     } catch {
-      set({
-        user: undefined,
-        token: undefined,
-        authStatus: "not-authenticated",
-      });
+      get().logout();
       return false;
     }
   },
