@@ -9,10 +9,13 @@ import {
   TableCell,
   Table,
 } from "@/components/ui/table.tsx";
+import { useProducts } from "@/shop/hooks/useProducts.tsx";
 import { PlusIcon } from "lucide-react";
 import { Link } from "react-router";
 
 const AdminProductsPage = () => {
+  const { data } = useProducts();
+
   return (
     <>
       <div className="flex justify-between items-center">
@@ -21,7 +24,6 @@ const AdminProductsPage = () => {
           subtitle="Aqui puedes ver y administrar tus productos"
         />
         <Link to={"/admin/products/new"}>
-          {" "}
           <Button>
             <PlusIcon />
             Nuevo Producto
@@ -32,7 +34,7 @@ const AdminProductsPage = () => {
       <Table className="bg-white p-10 shadow-xs border border-gray-200 pb-10">
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[100px]">ID</TableHead>
+            <TableHead className="w-25">ID</TableHead>
             <TableHead>Imagen</TableHead>
             <TableHead>Nombre</TableHead>
             <TableHead>Precio</TableHead>
@@ -43,28 +45,36 @@ const AdminProductsPage = () => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          <TableRow>
-            <TableCell className="font-medium">1</TableCell>
-            <TableCell>
-              <img
-                src="https://placehold.co/250x250"
-                alt="Product"
-                className="w-20 h-20 object-cover rounded-md"
-              />
+          {data?.products && data.products.length > 0 ? (
+            data.products.map((product) => (
+              <TableRow>
+                <TableCell className="font-medium">{product.id}</TableCell>
+                <TableCell>
+                  <img
+                    src={product.images[0]}
+                    alt={product.title}
+                    className="w-20 h-20 object-cover rounded-md"
+                  />
+                </TableCell>
+                <TableCell>{product.title}</TableCell>
+                <TableCell>$ {product.price}</TableCell>
+                <TableCell>{product.gender}</TableCell>
+                <TableCell>{product.stock}</TableCell>
+                <TableCell>{product.sizes.join(", ")}</TableCell>
+                <TableCell className="text-right">
+                  <Link to={`/admin/products/${product.slug}`}>Editar</Link>
+                </TableCell>
+              </TableRow>
+            ))
+          ) : (
+            <TableCell colSpan={8} className="text-center">
+              No se encontraron productos
             </TableCell>
-            <TableCell>Producto 1</TableCell>
-            <TableCell>$250</TableCell>
-            <TableCell>Categoria 1</TableCell>
-            <TableCell>100 stock</TableCell>
-            <TableCell>XS,S,L</TableCell>
-            <TableCell className="text-right">
-              <Link to={"/admin/products/t-shirt-teslo"}>Editar</Link>
-            </TableCell>
-          </TableRow>
+          )}
         </TableBody>
       </Table>
 
-      <CustomPagination totalPages={7} />
+      <CustomPagination totalPages={data?.pages || 0} />
     </>
   );
 };
