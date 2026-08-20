@@ -1,133 +1,22 @@
 import { AdminTitle } from "@/admin/components/AdminTitle";
-import { Navigate, useParams } from "react-router";
-
-import { useState } from "react";
 import { X, Plus, Upload, Tag, SaveAll } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router";
-import { useProduct } from "@/admin/hooks/useProduct.tsx";
-import { CustomFullScreenLoading } from "@/admin/components/CustomFullScreenLoading.tsx";
+import type { Product } from "@/interfaces/product.interface.ts";
 
-interface Product {
-  id: string;
+interface Props {
   title: string;
-  price: number;
-  description: string;
-  slug: string;
-  stock: number;
-  sizes: string[];
-  gender: string;
-  tags: string[];
-  images: string[];
+  subtitle: string;
+  product: Product;
 }
 
-const AdminProductPage = () => {
-  const { id } = useParams();
+const availableSizes = ["XS", "S", "M", "L", "XL", "XXL"];
 
-  const { isLoading, isError, data: producto2 } = useProduct(id || "");
-
-  const productTitle = id === "new" ? "Nuevo producto" : "Editar producto";
-  const productSubtitle =
-    id === "new"
-      ? "Aquí puedes crear un nuevo producto."
-      : "Aquí puedes editar el producto.";
-
-  const [product, setProduct] = useState<Product>({
-    id: "376e23ed-df37-4f88-8f84-4561da5c5d46",
-    title: "Men's Raven Lightweight Hoodie",
-    price: 115,
-    description:
-      "Introducing the Tesla Raven Collection. The Men's Raven Lightweight Hoodie has a premium, relaxed silhouette made from a sustainable bamboo cotton blend. The hoodie features subtle thermoplastic polyurethane Tesla logos across the chest and on the sleeve with a french terry interior for versatility in any season. Made from 70% bamboo and 30% cotton.",
-    slug: "men_raven_lightweight_hoodie",
-    stock: 10,
-    sizes: ["XS", "S", "M", "L", "XL", "XXL"],
-    gender: "men",
-    tags: ["hoodie"],
-    images: [
-      "https://placehold.co/250x250",
-      "https://placehold.co/250x250",
-      "https://placehold.co/250x250",
-      "https://placehold.co/250x250",
-    ],
-  });
-
-  const [newTag, setNewTag] = useState("");
-  const [dragActive, setDragActive] = useState(false);
-
-
-  // * redirecciones
-  if (isError) {
-    return <Navigate to={"/admin/products"} />;
-  }
-
-  if (isLoading) {
-    return <CustomFullScreenLoading />;
-  }
-
-  const handleInputChange = (field: keyof Product, value: string | number) => {
-    setProduct((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const addTag = () => {
-    if (newTag.trim() && !product.tags.includes(newTag.trim())) {
-      setProduct((prev) => ({
-        ...prev,
-        tags: [...prev.tags, newTag.trim()],
-      }));
-      setNewTag("");
-    }
-  };
-
-  const removeTag = (tagToRemove: string) => {
-    setProduct((prev) => ({
-      ...prev,
-      tags: prev.tags.filter((tag) => tag !== tagToRemove),
-    }));
-  };
-
-  const addSize = (size: string) => {
-    if (!product.sizes.includes(size)) {
-      setProduct((prev) => ({
-        ...prev,
-        sizes: [...prev.sizes, size],
-      }));
-    }
-  };
-
-  const removeSize = (sizeToRemove: string) => {
-    setProduct((prev) => ({
-      ...prev,
-      sizes: prev.sizes.filter((size) => size !== sizeToRemove),
-    }));
-  };
-
-  const handleDrag = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (e.type === "dragenter" || e.type === "dragover") {
-      setDragActive(true);
-    } else if (e.type === "dragleave") {
-      setDragActive(false);
-    }
-  };
-
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(false);
-    const files = e.dataTransfer.files;
-    console.log(files);
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    console.log(files);
-  };
-
+export const AdminProdcutForm = ({ product, subtitle, title }: Props) => {
   return (
     <>
       <div className="flex justify-between items-center">
-        <AdminTitle title={productTitle} subtitle={productSubtitle} />
+        <AdminTitle title={title} subtitle={subtitle} />
         <div className="flex justify-end mb-10 gap-4">
           <Button variant="outline">
             <Link to="/admin/products" className="flex items-center gap-2">
@@ -160,8 +49,8 @@ const AdminProductPage = () => {
                   </label>
                   <input
                     type="text"
-                    value={product.title}
-                    onChange={(e) => handleInputChange("title", e.target.value)}
+                    // value={product.title}
+                    // onChange={(e) => handleInputChange("title", e.target.value)}
                     className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                     placeholder="Título del producto"
                   />
@@ -174,10 +63,10 @@ const AdminProductPage = () => {
                     </label>
                     <input
                       type="number"
-                      value={product.price}
-                      onChange={(e) =>
-                        handleInputChange("price", parseFloat(e.target.value))
-                      }
+                      //   value={product.price}
+                      //   onChange={(e) =>
+                      //     handleInputChange("price", parseFloat(e.target.value))
+                      //   }
                       className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                       placeholder="Precio del producto"
                     />
@@ -189,10 +78,10 @@ const AdminProductPage = () => {
                     </label>
                     <input
                       type="number"
-                      value={product.stock}
-                      onChange={(e) =>
-                        handleInputChange("stock", parseInt(e.target.value))
-                      }
+                      //   value={product.stock}
+                      //   onChange={(e) =>
+                      //     handleInputChange("stock", parseInt(e.target.value))
+                      //   }
                       className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                       placeholder="Stock del producto"
                     />
@@ -205,8 +94,8 @@ const AdminProductPage = () => {
                   </label>
                   <input
                     type="text"
-                    value={product.slug}
-                    onChange={(e) => handleInputChange("slug", e.target.value)}
+                    // value={product.slug}
+                    // onChange={(e) => handleInputChange("slug", e.target.value)}
                     className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                     placeholder="Slug del producto"
                   />
@@ -217,10 +106,10 @@ const AdminProductPage = () => {
                     Género del producto
                   </label>
                   <select
-                    value={product.gender}
-                    onChange={(e) =>
-                      handleInputChange("gender", e.target.value)
-                    }
+                    // value={product.gender}
+                    // onChange={(e) =>
+                    //   handleInputChange("gender", e.target.value)
+                    // }
                     className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                   >
                     <option value="men">Hombre</option>
@@ -235,10 +124,10 @@ const AdminProductPage = () => {
                     Descripción del producto
                   </label>
                   <textarea
-                    value={product.description}
-                    onChange={(e) =>
-                      handleInputChange("description", e.target.value)
-                    }
+                    // value={product.description}
+                    // onChange={(e) =>
+                    //   handleInputChange("description", e.target.value)
+                    // }
                     rows={5}
                     className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none"
                     placeholder="Descripción del producto"
@@ -467,5 +356,3 @@ const AdminProductPage = () => {
     </>
   );
 };
-
-export default AdminProductPage;
