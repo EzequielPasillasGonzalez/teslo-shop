@@ -9,8 +9,9 @@ import {
   TableCell,
   Table,
 } from "@/components/ui/table.tsx";
+import { currencyFormatter } from "@/lib/currencyFormatter.ts";
 import { useProducts } from "@/shop/hooks/useProducts.tsx";
-import { PlusIcon } from "lucide-react";
+import { PencilIcon, PlusIcon } from "lucide-react";
 import { Link } from "react-router";
 
 const AdminProductsPage = () => {
@@ -34,7 +35,6 @@ const AdminProductsPage = () => {
       <Table className="bg-white p-10 shadow-xs border border-gray-200 pb-10">
         <TableHeader>
           <TableRow>
-            <TableHead className="w-25">ID</TableHead>
             <TableHead>Imagen</TableHead>
             <TableHead>Nombre</TableHead>
             <TableHead>Precio</TableHead>
@@ -48,7 +48,6 @@ const AdminProductsPage = () => {
           {data?.products && data.products.length > 0 ? (
             data.products.map((product) => (
               <TableRow>
-                <TableCell className="font-medium">{product.id}</TableCell>
                 <TableCell>
                   <img
                     src={product.images[0]}
@@ -56,13 +55,22 @@ const AdminProductsPage = () => {
                     className="w-20 h-20 object-cover rounded-md"
                   />
                 </TableCell>
-                <TableCell>{product.title}</TableCell>
-                <TableCell>$ {product.price}</TableCell>
+                <TableCell>
+                  <Link
+                    to={`/admin/products/${product.id}`}
+                    className="hover:text-blue-500 underline"
+                  >
+                    {product.title}
+                  </Link>
+                </TableCell>
+                <TableCell> {currencyFormatter(product.price)}</TableCell>
                 <TableCell>{product.gender}</TableCell>
                 <TableCell>{product.stock}</TableCell>
                 <TableCell>{product.sizes.join(", ")}</TableCell>
                 <TableCell className="text-right">
-                  <Link to={`/admin/products/${product.slug}`}>Editar</Link>
+                  <Link to={`/admin/products/${product.id}`}>
+                    <PencilIcon className="w-4 h-4 text-blue-500" />
+                  </Link>
                 </TableCell>
               </TableRow>
             ))
