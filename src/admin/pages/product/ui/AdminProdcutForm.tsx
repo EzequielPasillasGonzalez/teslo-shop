@@ -1,9 +1,12 @@
-import { AdminTitle } from "@/admin/components/AdminTitle";
-import { X, Plus, Upload, Tag, SaveAll } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { Link } from "react-router";
-import type { Product } from "@/interfaces/product.interface.ts";
+import { X, Plus, Upload, Tag, SaveAll } from "lucide-react";
 
+import { AdminTitle } from "@/admin/components/AdminTitle";
+import { Button } from "@/components/ui/button";
+import type { Product } from "@/interfaces/product.interface.ts";
+import { cn } from "@/lib/utils.ts";
 interface Props {
   title: string;
   subtitle: string;
@@ -13,8 +16,79 @@ interface Props {
 const availableSizes = ["XS", "S", "M", "L", "XL", "XXL"];
 
 export const AdminProdcutForm = ({ product, subtitle, title }: Props) => {
+  const [dragActive, setDragActive] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    defaultValues: product,
+  });
+
+  const addTag = () => {
+    // if (newTag.trim() && !product.tags.includes(newTag.trim())) {
+    // setProduct((prev) => ({
+    //   ...prev,
+    //   tags: [...prev.tags, newTag.trim()],
+    // }));
+    // setNewTag("");
+    // }
+  };
+
+  const removeTag = (tagToRemove: string) => {
+    // setProduct((prev) => ({
+    //   ...prev,
+    //   tags: prev.tags.filter((tag) => tag !== tagToRemove),
+    // }));
+  };
+
+  const addSize = (size: string) => {
+    if (!product.sizes.includes(size)) {
+      // setProduct((prev) => ({
+      //   ...prev,
+      //   sizes: [...prev.sizes, size],
+      // }));
+    }
+  };
+
+  const removeSize = (sizeToRemove: string) => {
+    // setProduct((prev) => ({
+    //   ...prev,
+    //   sizes: prev.sizes.filter((size) => size !== sizeToRemove),
+    // }));
+  };
+
+  const handleDrag = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setDragActive(true);
+    } else if (e.type === "dragleave") {
+      setDragActive(false);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    const files = e.dataTransfer.files;
+    console.log(files);
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    console.log(files);
+  };
+
+  // TODO: Remover en el futuro
+  const onSubmit = (productLike: Product) => {
+    console.log("onSubmit", productLike);
+  };
+
   return (
-    <>
+    <form onSubmit={handleSubmit(onSubmit)}>
       <div className="flex justify-between items-center">
         <AdminTitle title={title} subtitle={subtitle} />
         <div className="flex justify-end mb-10 gap-4">
@@ -25,7 +99,7 @@ export const AdminProdcutForm = ({ product, subtitle, title }: Props) => {
             </Link>
           </Button>
 
-          <Button>
+          <Button type="submit">
             <SaveAll className="w-4 h-4" />
             Guardar cambios
           </Button>
@@ -49,11 +123,20 @@ export const AdminProdcutForm = ({ product, subtitle, title }: Props) => {
                   </label>
                   <input
                     type="text"
-                    // value={product.title}
-                    // onChange={(e) => handleInputChange("title", e.target.value)}
-                    className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                    {...register("title", { required: true })}
+                    className={cn(
+                      "w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200",
+                      {
+                        "border-red-500": errors.title,
+                      },
+                    )}
                     placeholder="Título del producto"
                   />
+                  {errors.title && (
+                    <p className="text-red-500 text-sm">
+                      El título es requerido
+                    </p>
+                  )}
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -63,13 +146,23 @@ export const AdminProdcutForm = ({ product, subtitle, title }: Props) => {
                     </label>
                     <input
                       type="number"
-                      //   value={product.price}
-                      //   onChange={(e) =>
-                      //     handleInputChange("price", parseFloat(e.target.value))
-                      //   }
-                      className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                      {...register("price", {
+                        required: true,
+                        min: 1,
+                      })}
+                      className={cn(
+                        "w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200",
+                        {
+                          "border-red-500": errors.price,
+                        },
+                      )}
                       placeholder="Precio del producto"
                     />
+                    {errors.price && (
+                      <p className="text-red-500 text-sm">
+                        El precio debe ser mayor a 0
+                      </p>
+                    )}
                   </div>
 
                   <div>
@@ -78,13 +171,23 @@ export const AdminProdcutForm = ({ product, subtitle, title }: Props) => {
                     </label>
                     <input
                       type="number"
-                      //   value={product.stock}
-                      //   onChange={(e) =>
-                      //     handleInputChange("stock", parseInt(e.target.value))
-                      //   }
-                      className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                      {...register("stock", {
+                        required: true,
+                        min: 1,
+                      })}
+                      className={cn(
+                        "w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200",
+                        {
+                          "border-red-500": errors.stock,
+                        },
+                      )}
                       placeholder="Stock del producto"
                     />
+                    {errors.stock && (
+                      <p className="text-red-500 text-sm">
+                        El stock debe ser mayor a 0
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -94,11 +197,25 @@ export const AdminProdcutForm = ({ product, subtitle, title }: Props) => {
                   </label>
                   <input
                     type="text"
-                    // value={product.slug}
-                    // onChange={(e) => handleInputChange("slug", e.target.value)}
-                    className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                    {...register("slug", {
+                      required: true,
+                      validate: (value) =>
+                        !/\s/.test(value) ||
+                        "El slug no puede contener espacios en blanco",
+                    })}
+                    className={cn(
+                      "w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200",
+                      {
+                        "border-red-500": errors.slug,
+                      },
+                    )}
                     placeholder="Slug del producto"
                   />
+                  {errors.slug && (
+                    <p className="text-red-500 text-sm">
+                      {errors.slug.message || "El slug es requerido"}
+                    </p>
+                  )}
                 </div>
 
                 <div>
@@ -106,11 +223,11 @@ export const AdminProdcutForm = ({ product, subtitle, title }: Props) => {
                     Género del producto
                   </label>
                   <select
-                    // value={product.gender}
-                    // onChange={(e) =>
-                    //   handleInputChange("gender", e.target.value)
-                    // }
-                    className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                    {...register("gender")}
+                    className={cn(
+                      "w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200",
+                      {},
+                    )}
                   >
                     <option value="men">Hombre</option>
                     <option value="women">Mujer</option>
@@ -124,14 +241,21 @@ export const AdminProdcutForm = ({ product, subtitle, title }: Props) => {
                     Descripción del producto
                   </label>
                   <textarea
-                    // value={product.description}
-                    // onChange={(e) =>
-                    //   handleInputChange("description", e.target.value)
-                    // }
+                    {...register("description", { required: true })}
                     rows={5}
-                    className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none"
+                    className={cn(
+                      "w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none",
+                      {
+                        "border-red-500": errors.description,
+                      },
+                    )}
                     placeholder="Descripción del producto"
                   />
+                  {errors.description && (
+                    <p className="text-red-500 text-sm">
+                      La descripcion es requerida
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
@@ -210,8 +334,8 @@ export const AdminProdcutForm = ({ product, subtitle, title }: Props) => {
                 <div className="flex gap-2">
                   <input
                     type="text"
-                    value={newTag}
-                    onChange={(e) => setNewTag(e.target.value)}
+                    // value={newTag}
+                    // onChange={(e) => setNewTag(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && addTag()}
                     placeholder="Añadir nueva etiqueta..."
                     className="flex-1 px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
@@ -353,6 +477,6 @@ export const AdminProdcutForm = ({ product, subtitle, title }: Props) => {
           </div>
         </div>
       </div>
-    </>
+    </form>
   );
 };
