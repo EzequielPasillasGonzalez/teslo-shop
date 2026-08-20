@@ -4,11 +4,7 @@ import { useShopQueryParams } from "@/shop/hooks/useParams.tsx";
 import { Input } from "@/components/ui/input.tsx";
 
 const AdminHeader: React.FC = () => {
-  const {
-    getQueryParam,
-    setQueryParam,
-    gender: genderPath,
-  } = useShopQueryParams();
+  const { getQueryParam, setQueryParam } = useShopQueryParams();
 
   const searchQuery = getQueryParam("search");
 
