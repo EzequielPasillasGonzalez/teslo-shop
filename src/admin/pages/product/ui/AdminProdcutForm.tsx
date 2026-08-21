@@ -45,6 +45,8 @@ export const AdminProdcutForm = ({
 
   const inputTagRef = useRef<HTMLInputElement>(null);
 
+  const [files, setFiles] = useState<File[]>([]);
+
   const addTag = () => {
     const value = inputTagRef.current?.value?.trim();
 
@@ -95,12 +97,15 @@ export const AdminProdcutForm = ({
     e.stopPropagation();
     setDragActive(false);
     const files = e.dataTransfer.files;
-    console.log(files);
+    if (!files) return;
+    setFiles((prev) => [...prev, ...Array.from(files)]);
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
-    console.log(files);
+    if (!files) return;
+
+    setFiles((prev) => [...prev, ...Array.from(files)]);
   };
 
   return (
@@ -447,6 +452,27 @@ export const AdminProdcutForm = ({
                         {image}
                       </p>
                     </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Images por cargar */}
+              <div
+                className={cn("mt-6 space-y-3", {
+                  hidden: files.length === 0,
+                })}
+              >
+                <h3 className="text-sm font-medium text-slate-700">
+                  Imágenes por cargar
+                </h3>
+                <div className="grid grid-cols-2 gap-3">
+                  {files.map((files, index) => (
+                    <img
+                      src={URL.createObjectURL(files)}
+                      alt="Product"
+                      key={index}
+                      className="w-full h-full object-cover rounded-lg"
+                    />
                   ))}
                 </div>
               </div>
