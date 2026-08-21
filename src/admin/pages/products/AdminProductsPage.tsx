@@ -47,7 +47,7 @@ const AdminProductsPage = () => {
         <TableBody>
           {data?.products && data.products.length > 0 ? (
             data.products.map((product) => (
-              <TableRow>
+              <TableRow key={product.id}>
                 <TableCell>
                   <img
                     src={product.images[0]}
@@ -75,9 +75,14 @@ const AdminProductsPage = () => {
               </TableRow>
             ))
           ) : (
-            <TableCell colSpan={8} className="text-center">
-              No se encontraron productos
-            </TableCell>
+            <TableRow>
+              <TableCell
+                colSpan={7}
+                className="text-center py-6 text-muted-foreground"
+              >
+                No se encontraron productos
+              </TableCell>
+            </TableRow>
           )}
         </TableBody>
       </Table>
