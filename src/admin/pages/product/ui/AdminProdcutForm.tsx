@@ -55,10 +55,11 @@ export const AdminProdcutForm = ({ product, subtitle, title }: Props) => {
   };
 
   const removeSize = (sizeToRemove: string) => {
-    // setProduct((prev) => ({
-    //   ...prev,
-    //   sizes: prev.sizes.filter((size) => size !== sizeToRemove),
-    // }));
+    const sizeSet = new Set(
+      getValues("sizes").filter((size) => size != sizeToRemove),
+    );
+
+    setValue("sizes", Array.from(sizeSet));
   };
 
   const handleDrag = (e: React.DragEvent) => {
