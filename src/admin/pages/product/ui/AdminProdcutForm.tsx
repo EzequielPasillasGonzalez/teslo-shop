@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router";
 import { X, Plus, Upload, Tag, SaveAll } from "lucide-react";
@@ -30,22 +30,34 @@ export const AdminProdcutForm = ({ product, subtitle, title }: Props) => {
   });
 
   const selectedSizes = watch("sizes");
+  const usedTags = watch("tags");
+
+  const inputTagRef = useRef<HTMLInputElement>(null);
 
   const addTag = () => {
-    // if (newTag.trim() && !product.tags.includes(newTag.trim())) {
-    // setProduct((prev) => ({
-    //   ...prev,
-    //   tags: [...prev.tags, newTag.trim()],
-    // }));
-    // setNewTag("");
-    // }
+    const value = inputTagRef.current?.value?.trim();
+
+    if (!value) return;
+
+    const tagSet = new Set(getValues("tags"));
+    tagSet.add(value.toLowerCase());
+    setValue("tags", Array.from(tagSet));
+    if (inputTagRef.current) {
+      inputTagRef.current.value = "";
+    }
   };
 
   const removeTag = (tagToRemove: string) => {
-    // setProduct((prev) => ({
-    //   ...prev,
-    //   tags: prev.tags.filter((tag) => tag !== tagToRemove),
-    // }));
+    const value = tagToRemove.trim();
+
+    if (!value) return;
+
+    const tagSet = new Set(getValues("tags"));
+    tagSet.delete(value.toLowerCase());
+    setValue("tags", Array.from(tagSet));
+    if (inputTagRef.current) {
+      inputTagRef.current.value = "";
+    }
   };
 
   const addSize = (size: Size) => {
@@ -54,11 +66,9 @@ export const AdminProdcutForm = ({ product, subtitle, title }: Props) => {
     setValue("sizes", Array.from(sizeSet));
   };
 
-  const removeSize = (sizeToRemove: string) => {
-    const sizeSet = new Set(
-      getValues("sizes").filter((size) => size != sizeToRemove),
-    );
-
+  const removeSize = (size: Size) => {
+    const sizeSet = new Set(getValues("sizes"));
+    sizeSet.delete(size);
     setValue("sizes", Array.from(sizeSet));
   };
 
@@ -271,6 +281,12 @@ export const AdminProdcutForm = ({ product, subtitle, title }: Props) => {
 
               <div className="space-y-4">
                 <div className="flex flex-wrap gap-2">
+                  {selectedSizes.length === 0 && (
+                    <p className="text-red-500 text-sm">
+                      No hay ninguna talla disponible
+                    </p>
+                  )}
+
                   {availableSizes.map((size) => (
                     <span
                       key={size}
@@ -284,7 +300,7 @@ export const AdminProdcutForm = ({ product, subtitle, title }: Props) => {
                       {size}
                       <button
                         onClick={() => removeSize(size)}
-                        className="ml-2 text-blue-600 hover:text-blue-800 transition-colors duration-200"
+                        className=" cursor-pointer ml-2 text-blue-600 hover:text-blue-800 transition-colors duration-200"
                       >
                         <X className="h-3 w-3" />
                       </button>
@@ -323,7 +339,7 @@ export const AdminProdcutForm = ({ product, subtitle, title }: Props) => {
 
               <div className="space-y-4">
                 <div className="flex flex-wrap gap-2">
-                  {product.tags.map((tag) => (
+                  {usedTags.map((tag) => (
                     <span
                       key={tag}
                       className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800 border border-green-200"
@@ -343,9 +359,14 @@ export const AdminProdcutForm = ({ product, subtitle, title }: Props) => {
                 <div className="flex gap-2">
                   <input
                     type="text"
-                    // value={newTag}
-                    // onChange={(e) => setNewTag(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && addTag()}
+                    ref={inputTagRef}
+                    onKeyDown={(e) => {
+                      console.log(e.key);
+                      if (e.key === "Enter" || e.key === " " || e.key === ".") {
+                        console.log("paso if");
+                        addTag();
+                      }
+                    }}
                     placeholder="Añadir nueva etiqueta..."
                     className="flex-1 px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                   />
