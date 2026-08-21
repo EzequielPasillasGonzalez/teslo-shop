@@ -31,6 +31,7 @@ export const AdminProdcutForm = ({ product, subtitle, title }: Props) => {
 
   const selectedSizes = watch("sizes");
   const usedTags = watch("tags");
+  const currentStock = watch("stock");
 
   const inputTagRef = useRef<HTMLInputElement>(null);
 
@@ -42,9 +43,6 @@ export const AdminProdcutForm = ({ product, subtitle, title }: Props) => {
     const tagSet = new Set(getValues("tags"));
     tagSet.add(value.toLowerCase());
     setValue("tags", Array.from(tagSet));
-    if (inputTagRef.current) {
-      inputTagRef.current.value = "";
-    }
   };
 
   const removeTag = (tagToRemove: string) => {
@@ -363,8 +361,9 @@ export const AdminProdcutForm = ({ product, subtitle, title }: Props) => {
                     onKeyDown={(e) => {
                       console.log(e.key);
                       if (e.key === "Enter" || e.key === " " || e.key === ".") {
-                        console.log("paso if");
+                        e.preventDefault();
                         addTag();
+                        inputTagRef.current!.value = "";
                       }
                     }}
                     placeholder="Añadir nueva etiqueta..."
@@ -470,16 +469,17 @@ export const AdminProdcutForm = ({ product, subtitle, title }: Props) => {
                   </span>
                   <span
                     className={`px-2 py-1 text-xs font-medium rounded-full ${
-                      product.stock > 5
+                      currentStock > 5
                         ? "bg-green-100 text-green-800"
-                        : product.stock > 0
+                        : currentStock > 0
                           ? "bg-yellow-100 text-yellow-800"
                           : "bg-red-100 text-red-800"
                     }`}
                   >
-                    {product.stock > 5
+                    {currentStock} -
+                    {currentStock > 5
                       ? "En stock"
-                      : product.stock > 0
+                      : currentStock > 0
                         ? "Bajo stock"
                         : "Sin stock"}
                   </span>
@@ -499,7 +499,7 @@ export const AdminProdcutForm = ({ product, subtitle, title }: Props) => {
                     Tallas disponibles
                   </span>
                   <span className="text-sm text-slate-600">
-                    {product.sizes.length} tallas
+                    {selectedSizes.length} tallas
                   </span>
                 </div>
               </div>
